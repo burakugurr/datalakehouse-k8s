@@ -1,0 +1,4 @@
+image:
+  repository: jupyter/pyspark-notebook
+  tag: x86_64-spark-3.5.0
+  pullPolicy: IfNotPresent

@@ -1,0 +1,12 @@
+{{- if .Values.catalogs }}
+{{- range $name, $content := .Values.catalogs }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: trino-catalog-{{ $name }}
+data:
+  {{ $name }}.properties: |
+{{ $content | indent 4 }}
+---
+{{- end }}
+{{- end }}

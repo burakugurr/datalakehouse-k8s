@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "trino.fullname" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "trino.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "trino.name" . }}
+    spec:
+      containers:
+        - name: trino
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.trinoPort }}
+          volumeMounts:
+            - name: trino-config
+              mountPath: /etc/trino
+            {{- range $name := (keys .Values.catalogs) }}
+            - name: catalog-{{ $name }}
+              mountPath: /etc/trino/catalog/{{ $name }}.properties
+              subPath: {{ $name }}.properties
+            {{- end }}
+      volumes:
+        - name: trino-config
+          configMap:
+            name: {{ include "trino.fullname" . }}-config
+        {{- range $name := (keys .Values.catalogs) }}
+        - name: catalog-{{ $name }}
+          configMap:
+            name: trino-catalog-{{ $name }}
+        {{- end }}

@@ -1,0 +1,31 @@
+apiVersion: v2
+name: datalakehouse
+description: Full pipeline with Trino, Nessie, Jupyter, MinIO
+version: 0.1.0
+
+
+dependencies:
+  - name: trino
+    version: 0.1.0
+    repository: file://charts/trino
+  
+  - name: minio
+    version: 5.4.0
+    repository: https://charts.min.io/
+  
+  - name: nessie
+    version: 0.1.0
+    repository: file://charts/nessie
+  
+  - name: jupyter-spark
+    version: 0.1.0
+    repository: file://charts/jupyter-spark
+
+  - name: postgresql
+    version: "12.2.8"
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: postgresql.enabled
+
+  - name: airflow
+    version: 0.1.0
+    repository: file://charts/airflow

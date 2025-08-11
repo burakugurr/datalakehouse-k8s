@@ -1,0 +1,83 @@
+
+minio:
+  image:
+    tag: RELEASE.2024-12-18T13-15-44Z
+  auth:
+    rootUser: myaccesskey       # Trino ile uyumlu olması için
+    rootPassword: mysecretkey   # Trino ile uyumlu olması için
+  defaultBuckets: example-bucket
+  mode: standalone
+  persistence:
+    existingClaim: minio-pvc
+    enabled: true
+    size: 10Gi 
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "250m"
+
+nessie:
+  replicaCount: 1
+  image:
+    repository: ghcr.io/projectnessie/nessie
+    tag: "0.104.3"
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "250m"
+  versionStore:
+    type: ROCKS  
+    
+trino:
+  coordinator:
+    replicaCount: 1
+    config:
+      node-scheduler:
+        include-coordinator: "true"
+    resources:
+      requests:
+        memory: "1024Mi"
+        cpu: "500m"
+  worker:
+    replicaCount: 1
+  catalogs:
+    iceberg: |
+      connector.name=iceberg
+      iceberg.catalog.type=NESSIE
+      iceberg.nessie-catalog.uri=http://nessie:19120/api/v1
+      iceberg.nessie-catalog.default-branch=main
+      iceberg.nessie-catalog.default-warehouse-dir=s3a://example-bucket/warehouse
+      hive.s3.endpoint=http://minio:9000
+      hive.s3.path-style-access=true
+      hive.s3.aws-access-key=myaccesskey
+      hive.s3.aws-secret-key=mysecretkey
+
+
+jupyter-spark:
+  replicaCount: 1
+  image:
+    repository: jupyter/pyspark-notebook
+    tag: x86_64-python-3.11.6
+  sparkConf:
+    warehouse: "s3a://example-bucket/warehouse"
+    minioEndpoint: "http://minio:9000"
+    accessKey: "myaccesskey"
+    secretKey: "mysecretkey"
+    nessieUri: "http://nessie:19120/api/v1"
+  resources:
+    requests:
+      memory: "524Mi"
+      cpu: "500m"
+
+schemas:
+  coordinator:
+    dummy.txt: |
+      # dummy schema file for coordinator
+      placeholder=true
+  worker:
+    dummy.txt: |
+      # dummy schema file for worker
+      placeholder=true
+
+# imagePullSecrets:
+#   - name: regcred

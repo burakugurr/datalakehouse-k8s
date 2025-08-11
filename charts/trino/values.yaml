@@ -1,0 +1,23 @@
+image:
+  repository: trinodb/trino
+  tag: "443"
+  pullPolicy: IfNotPresent
+
+trinoPort: 8081
+
+service:
+  type: ClusterIP
+  port: 8081
+
+catalogs:
+  iceberg: |
+    connector.name=iceberg
+    iceberg.catalog.type=nessie
+    iceberg.nessie.uri=http://nessie-datalakehouse.default.svc.cluster.local:19120/api/v1
+    iceberg.nessie.ref=main
+    iceberg.nessie.auth.type=NONE
+    iceberg.file-format=PARQUET
+    hive.s3.aws-access-key=minioadmin
+    hive.s3.aws-secret-key=minioadmin
+    hive.s3.endpoint=http://datalakehouse-minio.default.svc.cluster.local:9000
+    hive.s3.path-style-access=true

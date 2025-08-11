@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+   name: jupyter-spark
+   namespace: default
+spec:
+   replicas: 1
+   selector:
+      matchLabels:
+         app: spark
+   template:
+      metadata:
+         labels:
+            app: spark
+      spec:
+         containers:
+            - name: jupyter-spark-container
+              image: jupyter/pyspark-notebook:x86_64-spark-3.5.0
+              imagePullPolicy: IfNotPresent
+              ports:
+              - containerPort: 8888
+              env: 
+              - name: JUPYTER_ENABLE_LAB
+                value: "yes"

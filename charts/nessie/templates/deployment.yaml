@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "nessie.fullname" . }}
+  labels:
+    app: {{ include "nessie.name" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "nessie.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "nessie.name" . }}
+    spec:
+      containers:
+        - name: nessie
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 19120
+              name: http    # ekledik
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}

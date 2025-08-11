@@ -1,0 +1,6 @@
+apiVersion: v2
+name: nessie
+description: Nessie Git-like Data Lake Service
+type: application
+version: 0.1.0  # Helm chart versiyonu
+appVersion: "0.104.3"  # Nessie uygulama versiyonu
