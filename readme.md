@@ -39,6 +39,29 @@ Bu proje, Trino, Nessie, Jupyter Spark ve MinIO gibi bileşenlerle tam bir veri 
    ```sh
     helm upgrade --install airflow apache-airflow/airflow -n airflow -f  .\airflow\org_values.yaml --debug --timeout 10m02s
    ```
+## Git Sync Konfigürasyonu
+
+Proje içinde git-sync ile bir repository'den dosya çekmek için aşağıdaki örnek değerleri kullanabilirsiniz:
+
+```yaml
+gitSync:
+  enabled: true
+  repo: "https://github.com/kullanici/proje-repo.git"
+  branch: "main"
+  rev: "HEAD"
+  depth: 1
+  wait: 30
+  root: "/git"
+  dest: "repo"
+  username: ""
+  password: ""
+```
+```sh
+minikube kubectl -- apply -f ./airflow/secret.yaml --namespace airflow
+
+
+minikube kubectl -- get secret git-credentials -o yaml -n airflow
+```
 
 ## Servis Portları
 
